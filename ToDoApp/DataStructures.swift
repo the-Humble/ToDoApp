@@ -42,7 +42,18 @@ class Storage
     static func AddGroup(title:String)
     {
         let newGroup = Group()
+        newGroup.groupID = UUID().uuidString
+        newGroup.title = title
         groups.append(newGroup)
+    }
+    
+    static func AddItem(groupIndex:Int, title:String)
+    {
+        let newItem = Item()
+        newItem.title = title
+        newItem.groupID = groups[groupIndex].groupID
+        newItem.itemID = UUID().uuidString
+        groups[groupIndex].items.append(newItem)
     }
     
     static func DeleteGroup(index:Int)
@@ -53,18 +64,18 @@ class Storage
     
     static func Initialize()
     {
-        var group1 = Group()
+        let group1 = Group()
         group1.title = "Groceries"
         group1.groupID = UUID().uuidString
         
-        var item1 = Item()
+        let item1 = Item()
         item1.title = "Apples"
         item1.itemID = UUID().uuidString
         item1.groupID = group1.groupID
         
         group1.items.append(item1)
         
-        var group2 = Group()
+        let group2 = Group()
         group2.title = "Store"
         group2.groupID = UUID().uuidString
         

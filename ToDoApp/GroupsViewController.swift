@@ -13,6 +13,8 @@ class GroupsViewController: UIViewController,
     
     @IBOutlet weak var myTableView: UITableView!
     
+    var destGroupIndex : Int = 0
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return Storage.groups.count
     }
@@ -38,6 +40,7 @@ class GroupsViewController: UIViewController,
         myTableView.dataSource = self
         
         Storage.Initialize();
+        
     }
 }
 
@@ -54,6 +57,20 @@ extension GroupsViewController
     
     func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
         return "Delete group \(Storage.groups[indexPath.row].title!)?"
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        destGroupIndex = indexPath.row
+        performSegue(withIdentifier: "groupToItem", sender: tableView.self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if(segue.identifier == "groupToItem")
+        {
+            let destinationVC = segue.destination as! ItemsViewController
+            
+            destinationVC.groupIndex = destGroupIndex
+        }
     }
 }
 

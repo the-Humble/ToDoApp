@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D5965AF271417E800CD336A /* ItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5965AE271417E800CD336A /* ItemTableViewCell.swift */; };
 		9ABFF7A22713A931006D7CF0 /* DataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABFF7A12713A931006D7CF0 /* DataStructures.swift */; };
 		9ABFF7A62713C402006D7CF0 /* GroupTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABFF7A52713C402006D7CF0 /* GroupTableViewCell.swift */; };
 		9ABFF7A92713DBD0006D7CF0 /* ItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABFF7A82713DBD0006D7CF0 /* ItemsViewController.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D5965AE271417E800CD336A /* ItemTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemTableViewCell.swift; sourceTree = "<group>"; };
 		9ABFF7A12713A931006D7CF0 /* DataStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructures.swift; sourceTree = "<group>"; };
 		9ABFF7A52713C402006D7CF0 /* GroupTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTableViewCell.swift; sourceTree = "<group>"; };
 		9ABFF7A82713DBD0006D7CF0 /* ItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewController.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				9AC2DBBC27022D7D006C43E5 /* Main.storyboard */,
 				9ABFF7A82713DBD0006D7CF0 /* ItemsViewController.swift */,
 				9ABFF7A52713C402006D7CF0 /* GroupTableViewCell.swift */,
+				4D5965AE271417E800CD336A /* ItemTableViewCell.swift */,
 				9AC2DBBF27022D7D006C43E5 /* Assets.xcassets */,
 				9AC2DBC127022D7D006C43E5 /* LaunchScreen.storyboard */,
 				9AC2DBC427022D7D006C43E5 /* Info.plist */,
@@ -151,6 +154,7 @@
 				9ABFF7A22713A931006D7CF0 /* DataStructures.swift in Sources */,
 				9AC2DBB727022D7D006C43E5 /* AppDelegate.swift in Sources */,
 				9AC2DBB927022D7D006C43E5 /* SceneDelegate.swift in Sources */,
+				4D5965AF271417E800CD336A /* ItemTableViewCell.swift in Sources */,
 				9ABFF7A62713C402006D7CF0 /* GroupTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
