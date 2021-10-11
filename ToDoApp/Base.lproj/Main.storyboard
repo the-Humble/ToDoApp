@@ -101,6 +101,9 @@
                     <navigationItem key="navigationItem" id="WID-H0-i4p">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="uI0-ns-sli">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="AlertNewGroup" destination="BYZ-38-t0r" id="8lC-FU-cB6"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
@@ -162,6 +165,9 @@
                     <navigationItem key="navigationItem" id="Zqb-K5-dJo">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="IRG-2G-dx9">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="AlertNewItem" destination="5JD-AA-zEW" id="wyi-c2-d74"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>

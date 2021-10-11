@@ -73,11 +73,24 @@ class Storage
         item1.itemID = UUID().uuidString
         item1.groupID = group1.groupID
         
+        let item2 = Item()
+        item2.title = "Pears"
+        item2.itemID = UUID().uuidString
+        item2.groupID = group1.groupID
+        
         group1.items.append(item1)
+        group1.items.append(item2)
         
         let group2 = Group()
         group2.title = "Store"
         group2.groupID = UUID().uuidString
+        
+        let item3 = Item()
+        item3.title = "Socks"
+        item3.itemID = UUID().uuidString
+        item3.groupID = group2.groupID
+        
+        group2.items.append(item3)
         
         groups.append(group1)
         groups.append(group2)
