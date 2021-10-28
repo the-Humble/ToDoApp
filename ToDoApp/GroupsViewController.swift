@@ -1,0 +1,113 @@
+//
+//  ViewController.swift
+//  ToDoApp
+//
+//  Created by Jose Ignacio Ferrer Vera on 2021-09-27.
+//
+
+import UIKit
+
+class GroupsViewController: UIViewController,
+                      UITableViewDelegate,
+                      UITableViewDataSource{
+    
+    @IBOutlet weak var myTableView: UITableView!
+    
+    var destGroupIndex : Int = 0
+    
+    var isInit = false
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return Storage.groups.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell : GroupTableViewCell = tableView.dequeueReusableCell(withIdentifier: "myGroupCellID") as! GroupTableViewCell
+        
+        cell.groupLabel?.text = Storage.groups[indexPath.row].title
+        cell.completedLabel?.text = String(Storage.groups[indexPath.row].GetCompleted())
+        cell.totalLabel?.text = String(Storage.groups[indexPath.row].items.count)
+        cell.selectionStyle = .none
+        
+        return cell
+    }
+    
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+        self.title = "ToDo App"
+        
+        myTableView.delegate = self
+        myTableView.dataSource = self
+        myTableView.reloadData()
+        
+        if(isInit == false)
+        {
+            Storage.Initialize();
+            isInit = true;
+        }
+        
+    }
+    
+    @IBAction func AlertNewGroup()
+    {
+        let myAlert = UIAlertController(title: "New Group", message: "Type the name of the new Group", preferredStyle: UIAlertController.Style.alert)
+        
+        myAlert.addTextField { (newItemTextField) in
+            newItemTextField.textAlignment = .center
+            newItemTextField.font = .systemFont(ofSize: 16)
+            
+        }
+        
+        let okAction = UIAlertAction(title: "Create", style: UIAlertAction.Style.default)
+        {(myAlertAction) in
+            let newGroupName = myAlert.textFields![0].text!
+            
+            Storage.AddGroup(title: newGroupName)
+            self.myTableView.reloadData()
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
+        
+        myAlert.addAction(okAction)
+        myAlert.addAction(cancelAction)
+        
+        self.present(myAlert, animated: true, completion: nil)
+    }
+}
+
+extension GroupsViewController
+{
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if(editingStyle == .delete)
+        {
+            Storage.DeleteGroup(index: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.left)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
+        return "Delete group \(Storage.groups[indexPath.row].title!)?"
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        destGroupIndex = indexPath.row
+        
+        performSegue(withIdentifier: "groupToItem", sender: tableView.self)
+    }
+    
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if(segue.identifier == "groupToItem")
+        {
+            let destinationVC = segue.destination as! ItemsViewController
+            
+            destinationVC.groupIndex = destGroupIndex
+        }
+    }
+}
+
