@@ -15,20 +15,53 @@ class ItemsViewController: UIViewController,
          
         var groupIndex : Int = 0
     
+        var storage : Storage = Storage(groups: [])
+    
+        let docsURL = try! FileManager.default.url(for: .documentDirectory,
+                                                  in: .userDomainMask,
+                                                  appropriateFor: nil,
+                                                  create: false)
+
+        func write()
+        {
+            let dataPath = docsURL.appendingPathComponent("my_data.plist")
+            
+            let archiver = try? NSKeyedArchiver.archivedData(withRootObject: self.storage, requiringSecureCoding: false)
+            
+            try? archiver?.write(to:dataPath)
+            
+            print(docsURL)
+        }
+
+        func read()
+        {
+            let dataPath = docsURL.appendingPathComponent("my_data.plist")
+            
+            if let data = try? Data(contentsOf: dataPath)
+            {
+                do{
+                    let foundStorage = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? Storage
+                    
+                    self.storage = foundStorage!
+                } catch{
+                    self.write()
+                }
+            }
+        }
     
          func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-             return Storage.groups[groupIndex].items.count
+             return storage.groups[groupIndex].items.count
          }
          
          func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
              
              let cell : ItemTableViewCell = tableView.dequeueReusableCell(withIdentifier: "myItemCellID") as! ItemTableViewCell
              
-             cell.itemLabel?.text = Storage.groups[groupIndex].items[indexPath.row].title
+             cell.itemLabel?.text = storage.groups[groupIndex].items[indexPath.row].title
              cell.backgroundColor = UIColor.systemBackground
              cell.selectionStyle = .none
              
-             if(Storage.groups[groupIndex].items[indexPath.row].completed)
+             if(storage.groups[groupIndex].items[indexPath.row].completed)
              {
                  cell.backgroundColor = UIColor.systemGray
              }
@@ -40,7 +73,7 @@ class ItemsViewController: UIViewController,
          override func viewDidLoad() {
              super.viewDidLoad()
              // Do any additional setup after loading the view.
-             self.title = Storage.groups[groupIndex].title
+             self.title = storage.groups[groupIndex].title
              
              myTableView.delegate = self
              myTableView.dataSource = self
@@ -63,7 +96,8 @@ class ItemsViewController: UIViewController,
             {(myAlertAction) in
                 let newItemName = myAlert.textFields![0].text!
                 
-                Storage.AddItem(groupIndex: self.groupIndex, title: newItemName)
+                self.storage.AddItem(groupIndex: self.groupIndex, title: newItemName)
+                self.write()
                 self.myTableView.reloadData()
             }
             
@@ -82,17 +116,20 @@ class ItemsViewController: UIViewController,
          func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
              if(editingStyle == .delete)
              {
-                 Storage.groups[groupIndex].items.remove(at: indexPath.row)
+                 self.storage.groups[groupIndex].items.remove(at: indexPath.row)
+                 self.write()
                  tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.left)
              }
          }
          
          func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-             return "Delete item \(Storage.groups[groupIndex].items[indexPath.row].title!)?"
+             return "Delete item \(storage.groups[groupIndex].items[indexPath.row].title)?"
          }
          
          func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-             Storage.groups[groupIndex].items[indexPath.row].completed = !Storage.groups[groupIndex].items[indexPath.row].completed
+             storage.groups[groupIndex].items[indexPath.row].completed = !storage.groups[groupIndex].items[indexPath.row].completed
+             
+             self.write()
              
              tableView.reloadData()
          }

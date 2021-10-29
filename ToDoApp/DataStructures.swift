@@ -8,11 +8,19 @@
 import Foundation
 
 
-class Group
+class Group : NSObject, NSCoding
 {
-    var groupID: String?
-    var title: String?
-    var items: [Item] = []
+    
+    var groupID: String
+    var title: String
+    var items: Array<Item> = []
+    
+    init(groupID: String, title:String, items:Array<Item>)
+    {
+        self.groupID = groupID
+        self.title = title
+        self.items = items
+    }
     
     func GetCompleted() -> Int
     {
@@ -25,74 +33,90 @@ class Group
         }
         return count
     }
-}
-
-class Item
-{
-    var groupID: String?
-    var itemID: String?
-    var title: String?
-    var completed = false;
-}
-
-class Storage
-{
-    static var groups : [Group] = []
     
-    static func AddGroup(title:String)
+    func encode(with coder: NSCoder) {
+        coder.encode(self.groupID, forKey: "groupID")
+        coder.encode(self.title, forKey: "groupTitle")
+        coder.encode(self.items, forKey: "groupItems")
+    }
+    
+    required convenience init?(coder: NSCoder) {
+        let id = coder.decodeObject(forKey: "groupID") as! String
+        let title = coder.decodeObject(forKey: "groupTitle") as! String
+        let items = coder.decodeObject(forKey: "groupItems") as! Array<Item>
+        
+        self.init(groupID: id, title: title, items: items)
+    }
+}
+
+class Item : NSObject, NSCoding
+{
+       
+    var groupID: String
+    var itemID: String
+    var title: String
+    var completed = false;
+    
+    init(groupID: String, itemID: String, title: String, completed: Bool)
     {
-        let newGroup = Group()
-        newGroup.groupID = UUID().uuidString
-        newGroup.title = title
+        self.groupID = groupID
+        self.itemID = itemID
+        self.title = title
+        self.completed = completed
+    }
+    
+    func encode(with coder: NSCoder) {
+        coder.encode(self.groupID, forKey: "groupID")
+        coder.encode(self.itemID, forKey: "itemID")
+        coder.encode(self.title, forKey: "title")
+        coder.encode(self.completed, forKey: "completed")
+    }
+    
+    required convenience init?(coder: NSCoder) {
+        let groupID = coder.decodeObject(forKey: "groupID") as! String
+        let itemID = coder.decodeObject(forKey: "itemID") as! String
+        let title = coder.decodeObject(forKey: "title") as! String
+        let completed = coder.decodeBool(forKey: "completed")
+        
+        self.init(groupID: groupID, itemID: itemID, title: title, completed: completed)
+    }
+}
+
+class Storage :NSObject, NSCoding
+{
+    
+    var groups : Array<Group> = []
+    
+    init(groups: Array<Group>)
+    {
+        self.groups = groups
+    }
+    
+    func encode(with coder: NSCoder) {
+        coder.encode(self.groups, forKey: "groups")
+    }
+    
+    required convenience init?(coder: NSCoder) {
+        let groupsArr = coder.decodeObject(forKey: "groups") as! Array<Group>
+        
+        self.init(groups: groupsArr)
+    }
+    
+    func AddGroup(title:String)
+    {
+        let newGroup = Group(groupID: UUID().uuidString, title: title, items: [])
         groups.append(newGroup)
     }
     
-    static func AddItem(groupIndex:Int, title:String)
+    func AddItem(groupIndex:Int, title:String)
     {
-        let newItem = Item()
-        newItem.title = title
-        newItem.groupID = groups[groupIndex].groupID
-        newItem.itemID = UUID().uuidString
+        let newItem = Item(groupID: groups[groupIndex].groupID, itemID: UUID().uuidString, title: title, completed: false)
         groups[groupIndex].items.append(newItem)
     }
     
-    static func DeleteGroup(index:Int)
+    func DeleteGroup(index:Int)
     {
         groups[index].items.removeAll()
         groups.remove(at: index)
-    }
-    
-    static func Initialize()
-    {
-        let group1 = Group()
-        group1.title = "Groceries"
-        group1.groupID = UUID().uuidString
-        
-        let item1 = Item()
-        item1.title = "Apples"
-        item1.itemID = UUID().uuidString
-        item1.groupID = group1.groupID
-        
-        let item2 = Item()
-        item2.title = "Pears"
-        item2.itemID = UUID().uuidString
-        item2.groupID = group1.groupID
-        
-        group1.items.append(item1)
-        group1.items.append(item2)
-        
-        let group2 = Group()
-        group2.title = "Store"
-        group2.groupID = UUID().uuidString
-        
-        let item3 = Item()
-        item3.title = "Socks"
-        item3.itemID = UUID().uuidString
-        item3.groupID = group2.groupID
-        
-        group2.items.append(item3)
-        
-        groups.append(group1)
-        groups.append(group2)
     }
 }
