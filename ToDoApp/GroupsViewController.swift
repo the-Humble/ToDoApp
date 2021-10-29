@@ -17,17 +17,51 @@ class GroupsViewController: UIViewController,
     
     var isInit = false
     
+    var storage : Storage = Storage(groups: [])
+    
+    let docsURL = try! FileManager.default.url(for: .documentDirectory,
+                                              in: .userDomainMask,
+                                              appropriateFor: nil,
+                                              create: false)
+    
+    func write()
+    {
+        let dataPath = docsURL.appendingPathComponent("my_data.plist")
+        
+        let archiver = try? NSKeyedArchiver.archivedData(withRootObject: self.storage, requiringSecureCoding: false)
+        
+        try? archiver?.write(to:dataPath)
+        
+        print(docsURL)
+    }
+    
+    func read()
+    {
+        let dataPath = docsURL.appendingPathComponent("my_data.plist")
+        
+        if let data = try? Data(contentsOf: dataPath)
+        {
+            do{
+                let foundStorage = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? Storage
+                
+                self.storage = foundStorage!
+            } catch{
+                self.write()
+            }
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Storage.groups.count
+        return storage.groups.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell : GroupTableViewCell = tableView.dequeueReusableCell(withIdentifier: "myGroupCellID") as! GroupTableViewCell
         
-        cell.groupLabel?.text = Storage.groups[indexPath.row].title
-        cell.completedLabel?.text = String(Storage.groups[indexPath.row].GetCompleted())
-        cell.totalLabel?.text = String(Storage.groups[indexPath.row].items.count)
+        cell.groupLabel?.text = storage.groups[indexPath.row].title
+        cell.completedLabel?.text = String(storage.groups[indexPath.row].GetCompleted())
+        cell.totalLabel?.text = String(storage.groups[indexPath.row].items.count)
         cell.selectionStyle = .none
         
         return cell
@@ -39,16 +73,17 @@ class GroupsViewController: UIViewController,
         // Do any additional setup after loading the view.
         self.title = "ToDo App"
         
+        self.read()
+        
         myTableView.delegate = self
         myTableView.dataSource = self
         myTableView.reloadData()
         
-        if(isInit == false)
-        {
-            Storage.Initialize();
-            isInit = true;
-        }
-        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        myTableView.reloadData()
     }
     
     @IBAction func AlertNewGroup()
@@ -65,7 +100,8 @@ class GroupsViewController: UIViewController,
         {(myAlertAction) in
             let newGroupName = myAlert.textFields![0].text!
             
-            Storage.AddGroup(title: newGroupName)
+            self.storage.AddGroup(title: newGroupName)
+            self.write()
             self.myTableView.reloadData()
         }
         
@@ -84,13 +120,15 @@ extension GroupsViewController
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if(editingStyle == .delete)
         {
-            Storage.DeleteGroup(index: indexPath.row)
+            self.storage.DeleteGroup(index: indexPath.row)
+            self.write()
             tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.left)
         }
     }
     
     func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-        return "Delete group \(Storage.groups[indexPath.row].title!)?"
+        self.write()
+        return "Delete group \(self.storage.groups[indexPath.row].title)?"
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -106,8 +144,11 @@ extension GroupsViewController
         {
             let destinationVC = segue.destination as! ItemsViewController
             
+            destinationVC.storage = storage
             destinationVC.groupIndex = destGroupIndex
         }
     }
+    
+    
 }
 
